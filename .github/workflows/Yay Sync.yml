@@ -51,6 +51,6 @@ jobs:
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git add releases/ current_release.txt
+        git add arch/x86_64/ versions/yay_current_release.txt
         git commit -m "Add new release $RELEASE"
         git push
