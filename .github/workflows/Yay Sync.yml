@@ -1,56 +1,19 @@
-name: Yay Sync
+name: Sync Releases
 
 on:
   schedule:
-    - cron: '0 0 1,8,15,21,29 * *' # Runs every hour
-  workflow_dispatch: # Allows manual trigger
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   sync-release:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out the repository
-      uses: actions/checkout@v3
-
-    - name: Fetch the latest release from the source repo
-      id: fetch_release
-      run: |
-        mkdir versions/
-        curl -s https://api.github.com/repos/Jguer/yay/releases/latest \
-          | jq -r '.tag_name' > versions/yay_latest_release.txt
-
-    - name: Compare with the current release
-      id: compare
-      run: |
-        if [ -f "versions/yay_current_release.txt" ]; then
-          CURRENT=$(cat versions/yay_current_release.txt)
-          LATEST=$(cat versions/yay_latest_release.txt)
-          if [ "$CURRENT" != "$LATEST" ]; then
-            echo "New release found: $LATEST"
-            echo "release_updated=true" >> $GITHUB_ENV
-            echo $LATEST > versions/yay_current_release.txt
-          else
-            echo "release_updated=false" >> $GITHUB_ENV
-          fi
-        else
-          echo "release_updated=true" >> $GITHUB_ENV
-          cat versions/yay_latest_release.txt > versions/yay_current_release.txt
-        fi
-
-    - name: Download the latest release
-      if: env.release_updated == 'true'
-      run: |
-        RELEASE=$(cat versions/yay_latest_release.txt)
-        curl -LO https://github.com/Jguer/yay/releases/download/$RELEASE/yay_$RELEASE_x86_64.tar.gz
-        mkdir -p arch/x86_64
-        mv yay_$RELEASE_x86_64.tar.gz arch/x86_64/
-
-    - name: Commit and Push New Release
-      if: env.release_updated == 'true'
-      run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
-        git add arch/x86_64/ versions/yay_current_release.txt
-        git commit -m "Add new release $RELEASE"
-        git push
+    - name: Sync Releases
+      uses: repo-sync/github-sync@v3
+      with:
+        source_repo: Jguer/yay
+        source_branch: main
+        destination_branch: main
+        github_token: ${{ secrets.GITHUB_TOKEN }}
