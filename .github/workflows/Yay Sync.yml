@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Sync Releases
-      uses: repo-sync/github-sync@v3
+      uses: repo-sync/github-sync@v2
       with:
         source_repo: Jguer/yay
         source_branch: main
