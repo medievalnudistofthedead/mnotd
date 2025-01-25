@@ -1,4 +1,0 @@
-[ZoneTransfer]
-ZoneId=3
-ReferrerUrl=https://github.com/Jguer/yay/releases
-HostUrl=https://objects.githubusercontent.com/github-production-release-asset-2e65be/67382094/089eed88-cc30-4f9d-9198-2bf37a3e421a?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250125%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250125T151543Z&X-Amz-Expires=300&X-Amz-Signature=84525044b52fe1cfed13d20a6f47e03abfb1a911db98fd0a3906441d47e0dc6b&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3Dyay_12.4.2_x86_64.tar.gz&response-content-type=application%2Foctet-stream
