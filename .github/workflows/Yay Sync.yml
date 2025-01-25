@@ -41,7 +41,7 @@ jobs:
     - name: Download the latest release
       if: env.release_updated == 'true'
       run: |
-        RELEASE=$(cat latest_release.txt)
+        RELEASE=$(cat versions/yay_latest_release.txt)
         curl -LO https://github.com/Jguer/yay/releases/download/$RELEASE/yay_$RELEASE_x86_64.tar.gz
         mkdir -p arch/x86_64
         mv yay_$RELEASE_x86_64.tar.gz arch/x86_64/
