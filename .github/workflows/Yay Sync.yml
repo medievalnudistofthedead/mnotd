@@ -1,0 +1,55 @@
+name: Yay Sync
+
+on:
+  schedule:
+    - cron: '0 0 1,8,15,21,29 * *' # Runs every hour
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  sync-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v3
+
+    - name: Fetch the latest release from the source repo
+      id: fetch_release
+      run: |
+        curl -s https://api.github.com/repos/Jguer/yay/releases/latest \
+          | jq -r '.tag_name' > latest_release.txt
+
+    - name: Compare with the current release
+      id: compare
+      run: |
+        if [ -f "current_release.txt" ]; then
+          CURRENT=$(cat current_release.txt)
+          LATEST=$(cat latest_release.txt)
+          if [ "$CURRENT" != "$LATEST" ]; then
+            echo "New release found: $LATEST"
+            echo "release_updated=true" >> $GITHUB_ENV
+            echo $LATEST > current_release.txt
+          else
+            echo "release_updated=false" >> $GITHUB_ENV
+          fi
+        else
+          echo "release_updated=true" >> $GITHUB_ENV
+          cat latest_release.txt > current_release.txt
+        fi
+
+    - name: Download the latest release
+      if: env.release_updated == 'true'
+      run: |
+        RELEASE=$(cat latest_release.txt)
+        curl -LO https://github.com/Jguer/yay/archive/$RELEASE.tar.gz
+        mkdir -p releases
+        mv $RELEASE.tar.gz releases/
+
+    - name: Commit and Push New Release
+      if: env.release_updated == 'true'
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add releases/ current_release.txt
+        git commit -m "Add new release $RELEASE"
+        git push
